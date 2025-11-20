@@ -1,0 +1,9 @@
+node_modules/
+.env
+.eslintcache
+.npmrc
+.pytest_cache/
+__pycache__/
+dist/
+coverage/
+.DS_Store

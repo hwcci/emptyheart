@@ -1,0 +1,22 @@
+{
+  "name": "discord-music-bot-node",
+  "version": "0.1.0",
+  "description": "Discord music bot using yt-dlp without Google sign-in.",
+  "main": "src/bot.js",
+  "type": "commonjs",
+  "scripts": {
+    "start": "node src/bot.js",
+    "test": "vitest run"
+  },
+  "engines": {
+    "node": ">=18"
+  },
+  "dependencies": {
+    "@discordjs/voice": "^0.18.0",
+    "discord.js": "^14.16.3",
+    "libsodium-wrappers": "^0.7.15"
+  },
+  "devDependencies": {
+    "vitest": "^2.1.4"
+  }
+}
