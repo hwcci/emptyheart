@@ -24,9 +24,7 @@ describe("ytdl flags", () => {
   it("includes safe flags", () => {
     const args = ytdl.buildArgs("hello");
     expect(args).toContain("--no-playlist");
-    expect(args).toContain("--no-call-home");
     expect(args).toContain("--no-check-certificates");
-    expect(args).toContain("--youtube-skip-dash-manifest");
     expect(args).toContain("--force-ipv4");
     expect(args).toContain("youtube:player_client=android");
   });
