@@ -3,6 +3,7 @@ const { once } = require("node:events");
 
 const YTDL_BIN = process.env.YTDLP_BIN || process.env.YTDLP_PATH || "yt-dlp";
 const ENV_PLAYER_CLIENT = process.env.YTDLP_PLAYER_CLIENT;
+const ENV_FORMAT = process.env.YTDLP_FORMAT || "bestaudio/best";
 
 // Flags chosen to avoid auth/sign-in and to keep responses lightweight.
 const BASE_ARGS = [
@@ -17,7 +18,8 @@ const isUrl = (query) => /^https?:\/\//i.test(query);
 
 function resolvePlayerClient(hasCookies) {
   if (hasCookies && !ENV_PLAYER_CLIENT) {
-    return "web"; // web client needed when using cookies
+    // iOS/tv clients تميل لتخطي تحديات الويب مع وجود كوكيز.
+    return "ios";
   }
   return ENV_PLAYER_CLIENT || "android";
 }
@@ -30,7 +32,7 @@ function buildArgs(query) {
   const playerClient = resolvePlayerClient(Boolean(cookies || cookiesBrowser));
 
   args.push("--extractor-args", `youtube:player_client=${playerClient}`);
-  args.push("--format", "bestaudio[ext=webm]/bestaudio/best");
+  args.push("--format", ENV_FORMAT);
   args.push("--print-json");
 
   if (cookies) {
