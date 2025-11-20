@@ -2,6 +2,7 @@ const { execFile } = require("node:child_process");
 const { once } = require("node:events");
 
 const YTDL_BIN = process.env.YTDLP_BIN || process.env.YTDLP_PATH || "yt-dlp";
+const PLAYER_CLIENT = process.env.YTDLP_PLAYER_CLIENT || "android";
 
 // Flags chosen to avoid auth/sign-in and to keep responses lightweight.
 const BASE_ARGS = [
@@ -12,16 +13,32 @@ const BASE_ARGS = [
   "--no-check-certificates",
   "--youtube-skip-dash-manifest",
   "--force-ipv4",
-  "--format",
-  "bestaudio[ext=webm]/bestaudio",
-  "--print-json",
 ];
 
 const isUrl = (query) => /^https?:\/\//i.test(query);
 
 function buildArgs(query) {
   const target = isUrl(query) ? query : `ytsearch1:${query}`;
-  return [...BASE_ARGS, target];
+  const args = [...BASE_ARGS];
+  args.push("--extractor-args", `youtube:player_client=${PLAYER_CLIENT}`);
+  args.push("--format", "bestaudio[ext=webm]/bestaudio");
+  args.push("--print-json");
+
+  const cookies = process.env.YTDLP_COOKIES;
+  if (cookies) {
+    args.push("--cookies", cookies);
+  }
+  const cookiesBrowser = process.env.YTDLP_COOKIES_FROM_BROWSER;
+  if (cookiesBrowser) {
+    args.push("--cookies-from-browser", cookiesBrowser);
+  }
+  const extraArgs = process.env.YTDLP_EXTRA_ARGS;
+  if (extraArgs) {
+    args.push(...extraArgs.split(/\s+/).filter(Boolean));
+  }
+
+  args.push(target);
+  return args;
 }
 
 let execFileImpl = execFile;

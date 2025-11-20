@@ -28,6 +28,7 @@ describe("ytdl flags", () => {
     expect(args).toContain("--no-check-certificates");
     expect(args).toContain("--youtube-skip-dash-manifest");
     expect(args).toContain("--force-ipv4");
+    expect(args).toContain("youtube:player_client=android");
   });
 
   it("prefixes searches with ytsearch1", () => {
