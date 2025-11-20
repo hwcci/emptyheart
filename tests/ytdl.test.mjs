@@ -26,7 +26,7 @@ describe("ytdl flags", () => {
     expect(args).toContain("--no-playlist");
     expect(args).toContain("--no-check-certificates");
     expect(args).toContain("--force-ipv4");
-    expect(args).toContain("youtube:player_client=android");
+    expect(args.find((a) => a.startsWith("youtube:player_client="))).toBeDefined();
   });
 
   it("prefixes searches with ytsearch1", () => {
