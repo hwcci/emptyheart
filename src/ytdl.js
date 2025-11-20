@@ -2,42 +2,33 @@ const { execFile } = require("node:child_process");
 const { once } = require("node:events");
 
 const YTDL_BIN = process.env.YTDLP_BIN || process.env.YTDLP_PATH || "yt-dlp";
-const ENV_PLAYER_CLIENT = process.env.YTDLP_PLAYER_CLIENT;
-const ENV_FORMAT = process.env.YTDLP_FORMAT || "bestaudio/best";
+const PLAYER_CLIENT = process.env.YTDLP_PLAYER_CLIENT || "android";
 
 // Flags chosen to avoid auth/sign-in and to keep responses lightweight.
 const BASE_ARGS = [
   "--no-playlist",
   "--no-warnings",
   "--ignore-errors",
+  "--no-call-home",
   "--no-check-certificates",
+  "--youtube-skip-dash-manifest",
   "--force-ipv4",
 ];
 
 const isUrl = (query) => /^https?:\/\//i.test(query);
 
-function resolvePlayerClient(hasCookies) {
-  if (hasCookies && !ENV_PLAYER_CLIENT) {
-    // iOS/tv clients تميل لتخطي تحديات الويب مع وجود كوكيز.
-    return "ios";
-  }
-  return ENV_PLAYER_CLIENT || "android";
-}
-
 function buildArgs(query) {
   const target = isUrl(query) ? query : `ytsearch1:${query}`;
   const args = [...BASE_ARGS];
-  const cookies = process.env.YTDLP_COOKIES;
-  const cookiesBrowser = process.env.YTDLP_COOKIES_FROM_BROWSER;
-  const playerClient = resolvePlayerClient(Boolean(cookies || cookiesBrowser));
-
-  args.push("--extractor-args", `youtube:player_client=${playerClient}`);
-  args.push("--format", ENV_FORMAT);
+  args.push("--extractor-args", `youtube:player_client=${PLAYER_CLIENT}`);
+  args.push("--format", "bestaudio[ext=webm]/bestaudio");
   args.push("--print-json");
 
+  const cookies = process.env.YTDLP_COOKIES;
   if (cookies) {
     args.push("--cookies", cookies);
   }
+  const cookiesBrowser = process.env.YTDLP_COOKIES_FROM_BROWSER;
   if (cookiesBrowser) {
     args.push("--cookies-from-browser", cookiesBrowser);
   }
